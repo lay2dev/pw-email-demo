@@ -2,7 +2,7 @@
   "name": "pw-email",
   "version": "0.0.1",
   "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "productName": "Lay2 Email Wallet Demo",
   "author": "johnz <johnz@lay2.dev>",
   "private": true,
   "scripts": {

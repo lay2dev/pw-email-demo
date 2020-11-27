@@ -1,5 +1,4 @@
 import moment from 'moment'
-import { transformers } from 'ckb-js-toolkit'
 
 import PWCore, {
   Address,
@@ -14,14 +13,6 @@ import { EmailBuilder } from './email-builder'
 import { EmailProvider, getEmailLock } from './email-provider'
 import { EmailSigner } from './email-signer'
 import * as chain from './chain'
-
-// const email = 'zhanghuaqiang@gmail.com'
-// const email = 'caijingsong94@gmail.com'
-// const timestamp = 1606290172
-// const lock = getEmailLock(email, timestamp)
-// console.log('address', lock, lock.toAddress())
-
-// queryBalance(email)
 
 export async function queryBalance (email: string): Promise<string> {
   const collector = new EmailCollector(chain.CELLAPI_URL)
@@ -85,7 +76,7 @@ export function parse (mail: string) {
   amountStr = amountStr
     .toLowerCase()
     .replace('ckb', '')
-    .replace(',', '')
+    .replace(',', '').trim()
 
   let toLock: Script
   // let addressType = 'email'
@@ -103,7 +94,7 @@ export function parse (mail: string) {
   return { from, to, toLock, amount }
 }
 
-export async function sendEmailAsset (rawMessage: string) {
+export async function sendEmailAsset (rawMessage: string): Promise<string> {
   const { from, toLock, amount } = parse(rawMessage)
   await queryBalance(from)
 
@@ -116,24 +107,6 @@ export async function sendEmailAsset (rawMessage: string) {
   const builder = new EmailBuilder(toLock.toAddress(), amount, 1000, collector, signature)
   const signer = new EmailSigner(provider)
 
-  const tx = await builder.build()
-  // tx.witnesses = tx.raw.inputCells.map(x => '0x')
-  // tx.raw.outputs.pop()
-  // tx.raw.outputsData.pop()
-  // tx.witnesses = tx.raw.inputs.map(x => '0x')
-  // tx.witnesses.pop()
-
-  const tx2 = transformers.TransformTransaction(await signer.sign(tx))
-  // let tx2 = transformers.TransformTransaction(tx)
-
-  console.log('tx', JSON.stringify(tx2))
-
-  // const txhash = await pwcore.rpc.send_transaction(tx2)
-
   const txhash = await pwcore.sendTransaction(builder, signer)
-  // 0x3424493e559bb02b36e88597fd0f71dc9ece6167 fc0abe5f
-  console.log('txhash', txhash)
+  return txhash
 }
-
-// const rawMessage = fs.readFileSync('./src/pwid/stitch_gmail2.eml').toString()
-// sendEmailAsset(rawMessage)

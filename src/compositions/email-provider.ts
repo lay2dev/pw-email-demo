@@ -35,7 +35,7 @@ export class EmailProvider extends Provider {
 
   async sign (message: string): Promise<string> {
     const promise = new Promise((resolve) => {
-      resolve('')
+      resolve(message)
     })
     await promise
     const sig = '0x' + Buffer.from(this.rawMessage).toString('hex')

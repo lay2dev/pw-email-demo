@@ -11,7 +11,7 @@
         />
 
         <q-toolbar-title>
-          PW Email Demo
+          Lay2 Email Wallet Demo
         </q-toolbar-title>
         <div></div>
       </q-toolbar>
