@@ -7,7 +7,7 @@ export class EmailSigner extends Signer {
   }
 
   async signMessages (messages: Message[]): Promise<string[]> {
-    const sigs = messages.map(x => '0x')
+    const sigs = messages.map(() => '0x')
     // const sigs = ['']
     sigs[0] = await this.provider.sign(messages[0].message)
     // sigs[1] = await this.provider.sign(messages[0].message)

@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { AmountUnit } from '@lay2/pw-core'
-import { computed, defineComponent, ref, watch } from '@vue/composition-api'
+import { defineComponent, ref, watch } from '@vue/composition-api'
 import { queryBalance as PWQueryBalance, parse, sendEmailAsset } from '../compositions/index'
 
 interface MailIntent {
@@ -50,36 +50,35 @@ export default defineComponent({
     const balance = ref<string>('0.00')
     const queryMailAddress = ref<string>('')
     const rawMessage = ref<string>('')
-    const parsedMailIntent = ref<MailIntent>({from: '', fromBalance:'0.00', to: '', amount: '0.00'})
+    const parsedMailIntent = ref<MailIntent>({ from: '', fromBalance: '0.00', to: '', amount: '0.00' })
 
     const queryBalance = async () => {
       console.log('queryBalance', queryMailAddress.value)
-      balance.value = await PWQueryBalance(queryMailAddress.value);
+      balance.value = await PWQueryBalance(queryMailAddress.value)
     }
 
     const sendTx = async () => {
-      if(parsedMailIntent.value.to){
-        try{
+      if (parsedMailIntent.value.to) {
+        try {
           const txhash = await sendEmailAsset(rawMessage.value)
-          console.log('send success', txhash);
-        }catch(err){
-          console.error('send err', err);
+          console.log('send success', txhash)
+        } catch (err) {
+          console.error('send err', err)
         }
-      }else{
+      } else {
         console.log('wrong email')
       }
     }
 
-    watch (rawMessage, async () => {
-      parsedMailIntent.value = {from: '', fromBalance:'0.00', to: '', amount: '0.00'};
-      try{
-        const {from, to, toLock, amount} = parse(rawMessage.value)
-        const balance = await PWQueryBalance(from);
-        parsedMailIntent.value = {from, fromBalance: balance, to, amount: amount.toString(AmountUnit.ckb)};
+    watch(rawMessage, async () => {
+      parsedMailIntent.value = { from: '', fromBalance: '0.00', to: '', amount: '0.00' }
+      try {
+        const { from, to, amount } = parse(rawMessage.value)
+        const balance = await PWQueryBalance(from)
+        parsedMailIntent.value = { from, fromBalance: balance, to, amount: amount.toString(AmountUnit.ckb) }
         console.log('mail', parsedMailIntent.value)
-      }catch(err){
-      }
-    });
+      } catch (err) { }
+    })
 
     return { balance, queryBalance, parsedMailIntent, sendTx, queryMailAddress, rawMessage }
   }

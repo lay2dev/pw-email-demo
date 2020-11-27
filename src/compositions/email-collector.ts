@@ -58,11 +58,6 @@ export class EmailCollector extends Collector {
 
       const lockScript = new Script(codeHash, args, hashType)
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const timestamp = args.substr(42)
-
-      // console.log('input timestamp', id, timestamp)
-
       cells.push(new Cell(capacity, lockScript, undefined, outPoint))
     }
     return cells

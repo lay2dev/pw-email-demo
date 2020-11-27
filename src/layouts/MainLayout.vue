@@ -17,7 +17,6 @@
       </q-toolbar>
     </q-header>
 
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -71,9 +70,7 @@ const linksData = [
     link: 'https://awesome.quasar.dev'
   }
 ]
-
 import { defineComponent, ref } from '@vue/composition-api'
-
 export default defineComponent({
   name: 'MainLayout',
   components: { EssentialLink },

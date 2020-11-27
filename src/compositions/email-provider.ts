@@ -26,10 +26,18 @@ export class EmailProvider extends Provider {
   }
 
   async init (): Promise<Provider> {
+    const promise = new Promise((resolve) => {
+      resolve('')
+    })
+    await promise
     return this
   }
 
   async sign (message: string): Promise<string> {
+    const promise = new Promise((resolve) => {
+      resolve('')
+    })
+    await promise
     const sig = '0x' + Buffer.from(this.rawMessage).toString('hex')
     // console.log('sig', sig)
     return sig
@@ -37,6 +45,10 @@ export class EmailProvider extends Provider {
   }
 
   async close () {
+    const promise = new Promise((resolve) => {
+      resolve('')
+    })
+    await promise
     console.log('do nothing')
   }
 }
