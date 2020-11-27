@@ -71,8 +71,7 @@ export class EmailBuilder extends Builder {
       }
     ])
 
-    // this.fee = Builder.calcFee(tx, this.feeRate)
-    this.fee = new Amount('1', AmountUnit.ckb)
+    this.fee = Builder.calcFee(tx, this.feeRate)
     if (changeCell.capacity.gte(Builder.MIN_CHANGE.add(this.fee))) {
       changeCell.capacity = changeCell.capacity.sub(this.fee)
       tx.raw.outputs.pop()
