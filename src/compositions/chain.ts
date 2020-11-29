@@ -24,4 +24,4 @@ export const pwidDeps = {
 }
 
 export const CELLAPI_URL = 'https://cellapitest.ckb.pw'
-export const NODE_URL = 'https://aggron.ckb.dev'
+export const NODE_URL = 'https://testnet.ckb.dev'
