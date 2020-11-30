@@ -18,7 +18,7 @@ export const pwidDeps = {
     hashType: 'type'
   },
   outPoint: {
-    txHash: '0xc6c70c4fd1996cfde924b7864804861d9ab3e4da4c5750c8b226ca60587414ac',
+    txHash: '0xa3a0292f2e3ddb439a6731012e2efffc05c110345f539a6474b01882e1fcc037',
     index: '0x0'
   }
 }
