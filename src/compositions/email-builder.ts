@@ -13,11 +13,13 @@ import PWCore, {
 } from '@lay2/pw-core'
 
 import * as chain from './chain'
+import { toUint32Le, JSBI } from '@nervosnetwork/ckb-sdk-utils'
 
 export class EmailBuilder extends Builder {
   constructor (
     private address: Address,
     private amount: Amount,
+    private timestamp: number,
     feeRate?: number,
     collector?: Collector,
     private signature?: string
@@ -49,7 +51,11 @@ export class EmailBuilder extends Builder {
     }
 
     const changeLock = PWCore.provider.address.toLockScript()
-    changeLock.args = changeLock.args.substr(0, 42) + this.address.toLockScript().args.substr(42)
+
+    const timestampHex = '0x' + JSBI.BigInt(this.timestamp).toString(16)
+    const str = toUint32Le(timestampHex)
+    changeLock.args = changeLock.args.substr(0, 42) + str.replace('0x', '')
+
     const changeCell = new Cell(inputSum.sub(outputCell.capacity), changeLock)
 
     // console.log('chain', chain.rsaDeps);

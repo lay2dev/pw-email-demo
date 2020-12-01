@@ -18,10 +18,11 @@ export const pwidDeps = {
     hashType: 'type'
   },
   outPoint: {
-    txHash: '0xa3a0292f2e3ddb439a6731012e2efffc05c110345f539a6474b01882e1fcc037',
+    txHash: '0x140dcbc6fb6cf3f32a16a7aa1b853cf8799dc0f026dcbf3b605e2367764b8df5',
     index: '0x0'
   }
 }
 
 export const CELLAPI_URL = 'https://cellapitest.ckb.pw'
 export const NODE_URL = 'https://testnet.ckb.dev'
+// export const NODE_URL = 'http://192.168.50.147:8114'

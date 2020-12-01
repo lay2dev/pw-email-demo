@@ -91,11 +91,11 @@ export function parse (mail: string) {
   console.log('toAddress', toLock.toAddress().addressString)
   console.log('toAmount', amount)
 
-  return { from, to, toLock, amount }
+  return { from, to, toLock, amount, timestamp }
 }
 
 export async function sendEmailAsset (rawMessage: string): Promise<string> {
-  const { from, toLock, amount } = parse(rawMessage)
+  const { from, toLock, amount, timestamp } = parse(rawMessage)
   await queryBalance(from)
 
   const provider = new EmailProvider(rawMessage, from)
@@ -104,7 +104,7 @@ export async function sendEmailAsset (rawMessage: string): Promise<string> {
   const pwcore = await new PWCore(chain.NODE_URL).init(provider, collector) //, 2, devChainConfig)
 
   console.log('sendEmailAsset.amount', amount)
-  const builder = new EmailBuilder(toLock.toAddress(), amount, 1000, collector, signature)
+  const builder = new EmailBuilder(toLock.toAddress(), amount, timestamp, 1000, collector, signature)
   const signer = new EmailSigner(provider)
 
   const txhash = await pwcore.sendTransaction(builder, signer)
