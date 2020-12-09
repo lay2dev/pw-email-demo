@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { simpleParser } from 'mailparser'
 
 import PWCore, {
   Address,
@@ -22,48 +23,20 @@ export async function queryBalance (email: string): Promise<string> {
   console.log('amount', amount.toString(AmountUnit.ckb))
   return amount.toString(AmountUnit.ckb)
 }
+export interface MailIntent {
+  from: string;
+  to: string;
+  toLock: Script;
+  amount: Amount;
+  timestamp: number;
+}
 
-export function parse (mail: string) {
-  mail = mail.replace('\r', '')
-  const parts = mail.split('\n\n')
-  const header = parts[0]
+export async function parse (mail: string): Promise<MailIntent> {
+  const parsedMail = await simpleParser(mail)
 
-  const lines = header.split('\n')
-
-  let subject = ''
-  let date = ''
-  let from = ''
-  for (const line of lines) {
-    let [key, ...values] = line.split(':')
-    key = key.toLowerCase()
-
-    if (key === 'subject') {
-      const value = values
-        .join(':')
-        .trim()
-        .toLowerCase()
-      subject = value
-    }
-
-    if (key === 'date') {
-      const value = values.join(':').trim()
-      date = value
-    }
-
-    if (key === 'from') {
-      const value = values
-        .join(':')
-        .trim()
-        .toLowerCase()
-      from = value
-      const start = from.lastIndexOf('<')
-      if (start >= 0) {
-        from = from.substr(start + 1)
-      }
-      from = from.replace('>', '').trim()
-    }
-  }
-
+  const subject = parsedMail.subject as string
+  const date = parsedMail.date as Date
+  const from = parsedMail.from?.value[0].address as string
   console.log('subject', subject)
   console.log('date', date)
   console.log('from', from)
@@ -76,7 +49,8 @@ export function parse (mail: string) {
   amountStr = amountStr
     .toLowerCase()
     .replace('ckb', '')
-    .replace(',', '').trim()
+    .replace(',', '')
+    .trim()
 
   let toLock: Script
   // let addressType = 'email'
@@ -95,7 +69,7 @@ export function parse (mail: string) {
 }
 
 export async function sendEmailAsset (rawMessage: string): Promise<string> {
-  const { from, toLock, amount, timestamp } = parse(rawMessage)
+  const { from, toLock, amount, timestamp } = await parse(rawMessage)
   await queryBalance(from)
 
   const provider = new EmailProvider(rawMessage, from)
@@ -104,7 +78,14 @@ export async function sendEmailAsset (rawMessage: string): Promise<string> {
   const pwcore = await new PWCore(chain.NODE_URL).init(provider, collector) //, 2, devChainConfig)
 
   console.log('sendEmailAsset.amount', amount)
-  const builder = new EmailBuilder(toLock.toAddress(), amount, timestamp, 1000, collector, signature)
+  const builder = new EmailBuilder(
+    toLock.toAddress(),
+    amount,
+    timestamp,
+    1000,
+    collector,
+    signature
+  )
   const signer = new EmailSigner(provider)
 
   const txhash = await pwcore.sendTransaction(builder, signer)
