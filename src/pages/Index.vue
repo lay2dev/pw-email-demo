@@ -107,7 +107,9 @@ export default defineComponent({
         const balance = await PWQueryBalance(from)
         parsedMailIntent.value = { from, fromBalance: balance, to, amount: amount.toString(AmountUnit.ckb) }
         console.log('mail', parsedMailIntent.value)
-      } catch (err) { }
+      } catch (err) {
+        console.log('parse error', err)
+      }
     })
 
     return { address, countdown, balance, queryBalance, parsedMailIntent, sendTx, queryMailAddress, rawMessage, generateAddress, link, txhash }
