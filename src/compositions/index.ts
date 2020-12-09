@@ -35,7 +35,7 @@ export async function parse (mail: string): Promise<MailIntent> {
   const parsedMail = await simpleParser(mail)
 
   const subject = parsedMail.subject as string
-  const date = parsedMail.date as Date
+  const date = parsedMail.headers.get('date') as string
   const from = parsedMail.from?.value[0].address as string
   console.log('subject', subject)
   console.log('date', date)
