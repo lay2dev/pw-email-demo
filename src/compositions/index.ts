@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { simpleParser } from 'mailparser'
+import { extract as letterparse } from 'letterparser'
 
 import PWCore, {
   Address,
@@ -31,12 +31,16 @@ export interface MailIntent {
   timestamp: number;
 }
 
-export async function parse (mail: string): Promise<MailIntent> {
-  const parsedMail = await simpleParser(mail)
+export function parse (mail: string): MailIntent {
+  const parsedMail = letterparse(mail)
 
   const subject = parsedMail.subject as string
-  const date = parsedMail.headers.get('date') as string
-  const from = parsedMail.from?.value[0].address as string
+  const date = parsedMail.date
+  let from = parsedMail.from as string
+  if (from.includes('<')) {
+    from = from.split('<')[1].replace('>', '')
+  }
+  from = from.trim()
   console.log('subject', subject)
   console.log('date', date)
   console.log('from', from)
@@ -69,7 +73,7 @@ export async function parse (mail: string): Promise<MailIntent> {
 }
 
 export async function sendEmailAsset (rawMessage: string): Promise<string> {
-  const { from, toLock, amount, timestamp } = await parse(rawMessage)
+  const { from, toLock, amount, timestamp } = parse(rawMessage)
   await queryBalance(from)
 
   const provider = new EmailProvider(rawMessage, from)

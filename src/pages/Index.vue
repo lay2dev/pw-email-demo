@@ -103,7 +103,7 @@ export default defineComponent({
     watch(rawMessage, async () => {
       parsedMailIntent.value = { from: '', fromBalance: '0.00', to: '', amount: '0.00' }
       try {
-        const { from, to, amount } = await parse(rawMessage.value)
+        const { from, to, amount } = parse(rawMessage.value)
         const balance = await PWQueryBalance(from)
         parsedMailIntent.value = { from, fromBalance: balance, to, amount: amount.toString(AmountUnit.ckb) }
         console.log('mail', parsedMailIntent.value)
